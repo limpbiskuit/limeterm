@@ -50,6 +50,7 @@ fn read_from_fd(fd: RawFd) -> Option<Vec<u8>> {
     }
 }
 
+#[allow(dead_code)]
 fn get_default_shell() -> String {
     std::env::var("SHELL").expect("Counldn't find default shell")
 }
@@ -60,7 +61,7 @@ pub fn main() {
     let sdl_context = sdl2::init().unwrap();
     let ttf_context = sdl2::ttf::init().unwrap();
 
-    let mut renderer = Renderer::new(1200, 800, sdl_context, &ttf_context, "/usr/share/fonts/TTF/FiraCode-Regular.ttf", 15, "lime terminal emulator");
+    let mut renderer = Renderer::new(1200, 800, sdl_context, &ttf_context, "/usr/share/fonts/noto/NotoSansMono-Regular.ttf", 15, "lime terminal emulator");
 
     let char_surface = renderer.font.render_char('i').shaded(Color::RGB(0, 0, 0), Color::RGB(0, 0, 0)).unwrap();
 

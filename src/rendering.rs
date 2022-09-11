@@ -1,6 +1,6 @@
-use std::hash::BuildHasherDefault;
+// use std::hash::BuildHasherDefault;
 
-use sdl2::{render::{WindowCanvas, BlendMode}, ttf::{Font, Sdl2TtfContext}, rect::Rect, Sdl, video::Window, surface::Surface};
+use sdl2::{render::{WindowCanvas, BlendMode}, ttf::{Font, Sdl2TtfContext}, rect::Rect, Sdl, surface::Surface};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Color(pub u8, pub u8, pub u8);
@@ -143,9 +143,9 @@ impl TermScreen {
         self.cells[i] = cell;
     }
 
-    pub fn set_cells(&mut self, cells: Vec<Cell>) {
-        self.cells = cells;
-    }
+    // pub fn set_cells(&mut self, cells: Vec<Cell>) {
+    //     self.cells = cells;
+    // }
 
     pub fn cells(&self) -> &Vec<Cell> {
         &self.cells
@@ -189,7 +189,7 @@ pub struct Renderer<'a> {
 
 impl<'a> Renderer<'a> {
     pub fn new(widht: u32, height: u32, sdl_context: Sdl, ttf_context: &'a Sdl2TtfContext, font_path: &str, font_size: u16, title: &str) -> Self {
-        let sdl_window = sdl_context.video().unwrap().window(title, widht, height).build().unwrap();
+        let sdl_window = sdl_context.video().unwrap().window(title, widht, height).resizable().build().unwrap();
         let canvas = sdl_window.into_canvas().build().unwrap();
         let font = ttf_context.load_font(font_path, font_size).unwrap();
 

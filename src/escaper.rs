@@ -1,4 +1,4 @@
-use vt100::{Parser, Screen, Cell};
+use vt100::{Parser};
 
 use crate::rendering::TermScreen;
 
