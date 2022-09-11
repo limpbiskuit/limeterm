@@ -4,8 +4,8 @@ version = "0.1.0"
 
 
 [dependencies]
-nix = "0.25.0"
-vt100 = "0.15.1"
+# nix = "0.25.0"
+# vt100 = "0.15.1"
 
 
 [dependencies.sdl2]
