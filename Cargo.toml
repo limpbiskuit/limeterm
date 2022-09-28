@@ -1,14 +1,8 @@
 [package]
 name = "limeterm"
 version = "0.1.0"
+edition = "2021"
 
 
 [dependencies]
-# nix = "0.25.0"
-# vt100 = "0.15.1"
-
-
-[dependencies.sdl2]
-version = "0.35.2"
-default-features = false
-features = ["ttf"]
+sdl2 = "0.35.2"

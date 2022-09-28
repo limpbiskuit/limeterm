@@ -1,3 +1,7 @@
+mod window;
+
+use window::AppWindow;
+
 fn main() {
-    println!("Hello, World !");
+    AppWindow::build().run();
 }
