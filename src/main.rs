@@ -1,6 +1,6 @@
-mod window;
+mod display;
 
-use window::AppWindow;
+use display::window::AppWindow;
 
 fn main() {
     AppWindow::build().run();
