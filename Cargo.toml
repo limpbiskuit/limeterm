@@ -5,10 +5,4 @@ edition = "2021"
 
 
 [dependencies]
-
-
-
-[dependencies.sdl2]
-version = "0.35.2"
-default-features = false
-features = ["ttf"]
+x11 = "2.20.0"
