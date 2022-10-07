@@ -1,3 +1,7 @@
+use sdl2::rect::Rect;
+
+use self::window::{TermWindow, SdlWindow};
+
 pub mod window;
 
 #[derive(Debug, Clone, Copy)]
@@ -119,8 +123,15 @@ impl Glyph {
         (self.attributes & ATTR_INVERTED) == 1
     }
 
-    pub fn draw(&self, x: u32, y: u32) {
+    pub fn draw(&self, x: u32, y: u32, window: &TermWindow, sdl_window: &mut SdlWindow) {
+        let font = sdl_window.ttf_context.load_font(sdl_window.font_path.clone(), 16).unwrap();
 
+        let surface = font.render_char(self.c).shaded::<sdl2::pixels::Color>(self.fgcolor.into(), self.bgcolor.into()).unwrap();
+        let texture = surface.as_texture(&sdl_window.tex_creator).unwrap();
+        let rect = Rect::new((x*window.cw) as i32, (y*window.ch) as i32, window.cw, window.ch);
+        let src = Rect::new(0, 0, window.cw, window.ch);
+
+        sdl_window.canvas.copy(&texture, src, rect).unwrap();
     }
 }
 

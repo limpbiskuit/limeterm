@@ -4,7 +4,7 @@ pub struct TermWindow {
     pub tw : u32,
     pub th: u32,
     pub cw: u32,
-    pub ch: u32
+    pub ch: u32,
 }
 
 pub struct SdlWindowBuilder {
@@ -45,7 +45,11 @@ impl SdlWindowBuilder {
 
         let canvas = window.into_canvas().build().unwrap();
 
-        SdlWindow { w: self.w, h: self.h, context, ttf_context, canvas }
+        let tex_creator = canvas.texture_creator();
+
+        let font_path = "/usr/share/fonts/noto/NotoSansMono-Regular.ttf".to_string();
+
+        SdlWindow { w: self.w, h: self.h, context, ttf_context, canvas, tex_creator, font_path }
     }
 }
 
@@ -55,32 +59,8 @@ pub struct SdlWindow {
 
     pub context: sdl2::Sdl,
     pub ttf_context: sdl2::ttf::Sdl2TtfContext,
-    pub canvas: sdl2::render::WindowCanvas
-}
+    pub canvas: sdl2::render::WindowCanvas,
+    pub tex_creator: sdl2::render::TextureCreator<sdl2::video::WindowContext>,
 
-impl SdlWindow {
-    pub fn run(&mut self) {
-        self.canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
-        self.canvas.clear();
-        
-        self.canvas.present();
-        
-        let mut event_pump = self.context.event_pump().unwrap();
-
-        'running: loop {
-            self.canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
-            self.canvas.clear();
-            for event in event_pump.poll_iter() {
-                match event {
-                    sdl2::event::Event::Quit {..} => {
-                        break 'running
-                    },
-                    _ => {}
-                }
-            }
-    
-            self.canvas.present();
-            std::thread::sleep(std::time::Duration::new(0, 1_000_000_000u32 / 60));
-        }
-    }
+    pub font_path: String,
 }
