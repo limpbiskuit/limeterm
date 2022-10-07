@@ -1,56 +1,28 @@
-#![allow(non_upper_case_globals)]
+use gtk::{prelude::*, TextView};
+use gtk::{Application, ApplicationWindow};
 
-use std::ffi::CString;
-
-use x11::xlib::{XRootWindow, XOpenDisplay, XDefaultScreen, XCreateSimpleWindow, XBlackPixel, XWhitePixel, XInternAtom, XSetWMProtocols, XSelectInput, ExposureMask, KeyPressMask, XMapWindow, XNextEvent, XEvent, Expose, XFillRectangle, XDefaultGC, ClientMessage, XDestroyWindow, XCloseDisplay, Atom};
-
-// mod display;
 fn main() {
-    unsafe {
-        let display = XOpenDisplay(std::ptr::null());
+    let application = Application::builder()
+        .application_id("com.example.FirstGtkApp")
+        .build();
 
-        if display.is_null(){
-            panic!("Can't open display");
-        }
+    application.connect_activate(|app| {
+        let window = ApplicationWindow::builder()
+            .application(app)
+            .title("First GTK Program")
+            .default_width(460)
+            .default_height(69)
+            .build();
 
-        let screen = XDefaultScreen(display);
+        let mut view = TextView::builder()
+            .margin(6)
+            .vexpand(false)
+            .build();
 
-        let window = XCreateSimpleWindow(
-            display,
-            XRootWindow(display, screen),
-            10, 10,
-            100, 100,
-            1,
-            XBlackPixel(display, screen),
-            XWhitePixel(display, screen),
-        );
+        window.add(&view);
 
+        window.show_all();
+    });
 
-        let wdelmsg = CString::new("WM_DELETE_WINDOW").unwrap();
-        let mut del_window: Atom = XInternAtom(display, wdelmsg.as_ptr(), 0);
-        
-        XSetWMProtocols(display, window, &mut del_window, 0);
-        
-        XSelectInput(display, window, ExposureMask | KeyPressMask);
-
-        XMapWindow(display, window);
-
-        let event: *mut XEvent = std::ptr::null_mut();
-
-        'running: loop {
-            XNextEvent(display, event);
-
-            match event.as_mut().unwrap().get_type() {
-                Expose => {
-                    XFillRectangle(display, window, XDefaultGC(display, screen), 20, 20, 10, 10);
-                },
-                ClientMessage => { break 'running },
-                _ => { break 'running; }
-            }
-        }
-
-        XDestroyWindow(display, window);
-
-        XCloseDisplay(display);
-    }
+    application.run();
 }

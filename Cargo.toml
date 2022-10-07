@@ -5,4 +5,4 @@ edition = "2021"
 
 
 [dependencies]
-x11 = "2.20.0"
+gtk = "0.15.5"
