@@ -1,7 +1,7 @@
 [package]
 name = "limeterm"
 version = "0.1.0"
-
+edition = "2021"
 
 [dependencies]
 nix = "0.25.0"

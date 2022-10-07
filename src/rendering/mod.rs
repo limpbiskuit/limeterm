@@ -73,44 +73,55 @@ impl Into<sdl2::pixels::Color> for Color {
     }
 }
 
-type GlyphMode = u32;
+type GlyphMode = u8;
+
+pub const ATTR_BOLD: u8 = 1 << 0;
+pub const ATTR_ITALIC: u8 = 1 << 1;
+pub const ATTR_UNDERLINE: u8 = 1 << 2;
+pub const ATTR_INVERTED: u8 = 1 << 3;
+
 
 #[derive(Debug, Clone)]
 pub struct Glyph {
-    pub c: String,
-    pub mode: GlyphMode,
+    pub c: char,
+    pub attributes: GlyphMode,
     pub fgcolor: Color,
     pub bgcolor: Color
 }
 
 impl Glyph {
-    pub fn new(c: String, fgcolor: Color, bgcolor: Color, bold: bool, italic: bool, underline: bool, inverted: bool) -> Self {
-        let mut mode: GlyphMode = 0;
+    pub fn new(c: char, fgcolor: Color, bgcolor: Color, bold: bool, italic: bool, underline: bool, inverted: bool) -> Self {
+        let mut attributes: GlyphMode = 0;
 
-        if bold { mode |= 1 << 0 }
-        if italic { mode |= 1 << 1 }
-        if underline { mode |= 1 << 2 }
-        if inverted { mode |= 1 << 3 }
+        if bold { attributes |= ATTR_BOLD }
+        if italic { attributes |= ATTR_ITALIC }
+        if underline { attributes |= ATTR_UNDERLINE }
+        if inverted { attributes |= ATTR_INVERTED }
 
-        Self { c, mode, fgcolor, bgcolor }
+        Self { c, attributes, fgcolor, bgcolor }
     }
 }
 
-impl From<vt100::Cell> for Glyph {
-    fn from(c: vt100::Cell) -> Self {
-        let fgcolor;
-        let bgcolor;
+impl Glyph {
+    pub fn is_bold(&self) -> bool {
+        (self.attributes & ATTR_BOLD) == 1
+    }
 
-        match c.fgcolor() {
-            vt100::Color::Default => { fgcolor = Color(200, 200, 200); }
-            _ => { fgcolor = c.fgcolor().into() }
-        }
+    pub fn is_italic(&self) -> bool {
+        (self.attributes & ATTR_ITALIC) == 1
+    }
 
-        match c.bgcolor() {
-            vt100::Color::Default => { bgcolor = Color(0, 0, 0); }
-            _ => { bgcolor = c.bgcolor().into() }
-        }
+    pub fn is_underline(&self) -> bool {
+        (self.attributes & ATTR_UNDERLINE) == 1
+    }
 
-        Self::new(c.contents(), fgcolor, bgcolor, c.bold(), c.italic(), c.underline(), c.inverse())
+    pub fn is_inverted(&self) -> bool {
+        (self.attributes & ATTR_INVERTED) == 1
+    }
+
+    pub fn draw(&self, x: u32, y: u32) {
+
     }
 }
+
+pub type Line = Vec<Glyph>;

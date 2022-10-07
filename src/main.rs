@@ -1,9 +1,10 @@
-use rendering::{Glyph, Color, window::SdlWindowBuilder};
-
 mod rendering;
+mod terminal;
+
+use terminal::Term;
 
 pub fn main() {
-    let mut window = SdlWindowBuilder::new().build();
+    let mut term = Term::new(0, 0, "test");
 
-    window.run();
+    term.run();
 }
