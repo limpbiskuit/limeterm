@@ -1,8 +1,5 @@
-use sdl2::rect::Rect;
-
-use self::window::{TermWindow, SdlWindow};
-
 pub mod window;
+pub mod text;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Color(pub u8, pub u8, pub u8);
@@ -76,63 +73,3 @@ impl Into<sdl2::pixels::Color> for Color {
         sdl2::pixels::Color { r: self.0, g: self.1, b: self.2, a: 255 }
     }
 }
-
-type GlyphMode = u8;
-
-pub const ATTR_BOLD: u8 = 1 << 0;
-pub const ATTR_ITALIC: u8 = 1 << 1;
-pub const ATTR_UNDERLINE: u8 = 1 << 2;
-pub const ATTR_INVERTED: u8 = 1 << 3;
-
-
-#[derive(Debug, Clone)]
-pub struct Glyph {
-    pub c: char,
-    pub attributes: GlyphMode,
-    pub fgcolor: Color,
-    pub bgcolor: Color
-}
-
-impl Glyph {
-    pub fn new(c: char, fgcolor: Color, bgcolor: Color, bold: bool, italic: bool, underline: bool, inverted: bool) -> Self {
-        let mut attributes: GlyphMode = 0;
-
-        if bold { attributes |= ATTR_BOLD }
-        if italic { attributes |= ATTR_ITALIC }
-        if underline { attributes |= ATTR_UNDERLINE }
-        if inverted { attributes |= ATTR_INVERTED }
-
-        Self { c, attributes, fgcolor, bgcolor }
-    }
-}
-
-impl Glyph {
-    pub fn is_bold(&self) -> bool {
-        (self.attributes & ATTR_BOLD) == 1
-    }
-
-    pub fn is_italic(&self) -> bool {
-        (self.attributes & ATTR_ITALIC) == 1
-    }
-
-    pub fn is_underline(&self) -> bool {
-        (self.attributes & ATTR_UNDERLINE) == 1
-    }
-
-    pub fn is_inverted(&self) -> bool {
-        (self.attributes & ATTR_INVERTED) == 1
-    }
-
-    pub fn draw(&self, x: u32, y: u32, window: &TermWindow, sdl_window: &mut SdlWindow) {
-        let font = sdl_window.ttf_context.load_font(sdl_window.font_path.clone(), 16).unwrap();
-
-        let surface = font.render_char(self.c).shaded::<sdl2::pixels::Color>(self.fgcolor.into(), self.bgcolor.into()).unwrap();
-        let texture = surface.as_texture(&sdl_window.tex_creator).unwrap();
-        let rect = Rect::new((x*window.cw) as i32, (y*window.ch) as i32, window.cw, window.ch);
-        let src = Rect::new(0, 0, window.cw, window.ch);
-
-        sdl_window.canvas.copy(&texture, src, rect).unwrap();
-    }
-}
-
-pub type Line = Vec<Glyph>;

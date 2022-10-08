@@ -1,4 +1,4 @@
-use crate::rendering::{Line, window::{SdlWindow, SdlWindowBuilder, TermWindow}, Glyph, Color};
+use crate::rendering::{window::{SdlWindow, SdlWindowBuilder, TermWindow}, Color, text::{Line, Glyph}};
 
 pub struct Term {
     pub rows: u32,
@@ -22,7 +22,7 @@ impl Term {
         let cw: u32;
         let ch: u32;
         {
-            let font = sdl_window.ttf_context.load_font("/usr/share/fonts/noto/NotoSansMono-Regular.ttf", 16).unwrap();
+            let font = sdl_window.ttf_context.load_font("/usr/share/fonts/noto/NotoSansMono-Regular.ttf", 14).unwrap();
             (cw, ch) = font.size_of_char('I').unwrap();
         }
             
@@ -37,7 +37,7 @@ impl Term {
 
     pub fn run(&mut self) {
 
-        let g = Glyph::new('u', Color ( 255, 0, 0 ), Color ( 255, 255, 255 ), false, false, false, false);
+        let g = Glyph::new('u', Color ( 0, 0, 0 ), Color ( 255, 255, 255 ), false, false, false, false);
 
         self.sdl_window.canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
         self.sdl_window.canvas.clear();
@@ -50,7 +50,7 @@ impl Term {
             self.sdl_window.canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
             self.sdl_window.canvas.clear();
 
-            g.draw(1, 4, &self.window, &mut self.sdl_window);
+            g.draw(0, 0, &self.window, &mut self.sdl_window);
 
             for event in event_pump.poll_iter() {
                 match event {
