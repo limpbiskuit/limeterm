@@ -45,7 +45,7 @@ impl Glyph {
         (self.attributes & ATTR_INVERTED) == ATTR_INVERTED
     }
 
-    pub fn draw(&self, x: u32, y: u32, window: &TermWindow, sdl_window: &mut SdlWindow) {
+    pub fn draw(&self, x: u32, y: u32, window: &TermWindow, sdl_window: &mut SdlWindow) -> Result<(), String> {
         let mut font = sdl_window.ttf_context.load_font(sdl_window.font_path.clone(), 14).unwrap();
 
         if self.is_bold() { font.set_style(FontStyle::BOLD); }
@@ -61,8 +61,28 @@ impl Glyph {
         let texture = surface.as_texture(&sdl_window.tex_creator).unwrap();
         let rect = Rect::new((x*window.cw) as i32, (y*window.ch) as i32, window.cw, window.ch);
 
-        sdl_window.canvas.copy(&texture, None, rect).unwrap();
+        sdl_window.canvas.copy(&texture, None, rect)?;
+        Ok(())
     }
 }
 
-pub type Line = Vec<Glyph>;
+pub struct Line(pub Vec<Glyph>);
+
+impl Line {
+    pub fn new(text: &str) -> Self {
+        let mut glyphs: Vec<Glyph> = Vec::new();
+        for c in text.chars() {
+            let g = Glyph::new(c, Color ( 255, 255, 255 ), Color ( 0, 0, 0 ), false, false, false, false);
+            glyphs.push(g);
+        }
+
+        Self(glyphs)
+    }
+
+    pub fn draw(&self, y: u32, window: &TermWindow, sdl_window: &mut SdlWindow) -> Result<(), String> {
+        for x in 0..self.0.len() {
+            self.0[x].draw(x as u32, y, window, sdl_window)?;
+        }
+        Ok(())
+    }
+}

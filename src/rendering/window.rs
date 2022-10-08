@@ -41,7 +41,9 @@ impl SdlWindowBuilder {
         let context = sdl2::init().unwrap();
         let ttf_context = sdl2::ttf::init().unwrap();
         let subsystem = context.video().unwrap();
-        let window = subsystem.window(self.title.as_str(), self.w, self.h).build().unwrap();
+        let window = subsystem.window(self.title.as_str(), self.w, self.h)
+            .build()
+            .unwrap();
 
         let canvas = window.into_canvas().build().unwrap();
 

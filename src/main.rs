@@ -4,7 +4,7 @@ mod terminal;
 use terminal::Term;
 
 pub fn main() {
-    let mut term = Term::new(0, 0, "test");
+    let mut term = Term::new(30, 100, "limeterm");
 
-    term.run();
+    term.run().unwrap();
 }
