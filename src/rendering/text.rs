@@ -9,7 +9,7 @@ pub const ATTR_ITALIC: u8 = 1 << 1;
 pub const ATTR_UNDERLINE: u8 = 1 << 2;
 pub const ATTR_INVERTED: u8 = 1 << 3;
 
-
+#[derive(Debug)]
 pub struct Glyph {
     pub c: char,
     pub attributes: GlyphMode,
@@ -45,7 +45,7 @@ impl Glyph {
         (self.attributes & ATTR_INVERTED) == ATTR_INVERTED
     }
 
-    pub fn draw(&self, x: u32, y: u32, window: &TermWindow, sdl_window: &mut SdlWindow) -> Result<(), String> {
+    pub fn draw(&self, x: usize, y: usize, window: &TermWindow, sdl_window: &mut SdlWindow) -> Result<(), String> {
         let mut font = sdl_window.ttf_context.load_font(sdl_window.font_path.clone(), 14).unwrap();
 
         if self.is_bold() { font.set_style(FontStyle::BOLD); }
@@ -59,29 +59,24 @@ impl Glyph {
             surface = font.render_char(self.c).shaded(self.bgcolor, self.fgcolor).unwrap();
         }
         let texture = surface.as_texture(&sdl_window.tex_creator).unwrap();
-        let rect = Rect::new((x*window.cw) as i32, (y*window.ch) as i32, window.cw, window.ch);
+        let rect = Rect::new((x*window.cw as usize) as i32, (y*window.ch as usize) as i32, window.cw, window.ch);
 
         sdl_window.canvas.copy(&texture, None, rect)?;
         Ok(())
     }
 }
 
+#[derive(Debug)]
 pub struct Line(pub Vec<Glyph>);
 
 impl Line {
-    pub fn new(text: &str) -> Self {
-        let mut glyphs: Vec<Glyph> = Vec::new();
-        for c in text.chars() {
-            let g = Glyph::new(c, Color ( 255, 255, 255 ), Color ( 0, 0, 0 ), false, false, false, false);
-            glyphs.push(g);
-        }
-
+    pub fn new(glyphs: Vec<Glyph>) -> Self {
         Self(glyphs)
     }
 
-    pub fn draw(&self, y: u32, window: &TermWindow, sdl_window: &mut SdlWindow) -> Result<(), String> {
+    pub fn draw(&self, y: usize, window: &TermWindow, sdl_window: &mut SdlWindow) -> Result<(), String> {
         for x in 0..self.0.len() {
-            self.0[x].draw(x as u32, y, window, sdl_window)?;
+            self.0[x].draw(x, y, window, sdl_window)?;
         }
         Ok(())
     }
